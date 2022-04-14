@@ -14,9 +14,9 @@ public class controller {
     private DatabaseConnector dbc;
 
     public controller() {
-        view = new view();
-        model = new model();
         dbc = new DatabaseConnector();
+        view = new view();
+        model = new model(dbc);
 
         JScrollPane scroll = new JScrollPane(model.getList(), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         view.setScrollPane(scroll);
@@ -30,40 +30,52 @@ public class controller {
         frame.setVisible(true);
         frame.setSize(1600, 500);
 
-        for (int i = 0; i < dbc.getDatabaseContent().size(); i++) {
-            model.addMeepObjectToArrayList((meep) dbc.getDatabaseContent().get(i));
-        }
-        model.initizializeViewList();
+        model.updateViewList(dbc);
 
         view.getAddUpdateButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (model.getEditing()) {
+
                     model.switchAddEditMode(view.getAddUpdateButton());
                 }
-            }
-        });
-
-        model.getList().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent event) {
-                System.out.println("test");
-                if (!event.getValueIsAdjusting()){
-
-                    if (model.getList().getSelectedIndex() == -1) {
-                        //No selection, disable fire button.
-
-                    } else {
-                        //Selection, enable the fire button.
-                        System.out.println("Selected cell");
-                    }
-
+                else {
+                    dbc.insertData(view.getMeepTextTextField().getText());
+                    model.updateViewList(dbc);
                 }
             }
         });
 
+        view.getDeleteButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               dbc.deleteData( model.getMeepFromArrayListByID(model.getList().getSelectedIndex()).getId());
+               model.updateViewList(dbc);
+            }
+        });
+
+        model.getList().addListSelectionListener(new Listener());
+
     }
 
-    public static void main(String[] args) {
-        controller c = new controller();
+    private class Listener implements ListSelectionListener {
+        public void valueChanged(ListSelectionEvent event) {
+            if (!event.getValueIsAdjusting()){
+
+                if (model.getList().getSelectedIndex() == -1) {
+                    //No selection, disable fire button.
+                    view.getAddUpdateButton().setText("Add");
+                    model.setEditing(false);
+
+                } else {
+                    //Selection, enable the fire button.
+                    view.getAddUpdateButton().setText("Update");
+                    model.setEditing(true);
+                    System.out.println("Selected cell index = " + model.getList().getSelectedIndex());
+                }
+
+            }
+        }
     }
+    public static void main(String[] args) {controller c = new controller();}
 }

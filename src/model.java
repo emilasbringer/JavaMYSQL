@@ -12,9 +12,9 @@ public class model {
     private Font listFont = new Font("Helvetica", Font.BOLD, 15);
     private boolean editing = false;
 
-    public model() {
+    public model(DatabaseConnector dbc) {
         meepArrayList = new ArrayList<>();
-        initizializeViewList();
+        updateViewList(dbc);
     }
 
     public void switchAddEditMode(JButton addUpdateButton) {
@@ -32,29 +32,32 @@ public class model {
         meepArrayList.add(new meep(meepObject));
     }
 
-    public void initizializeViewList() {
+    public void updateViewList(DatabaseConnector dbc) {
+        meepArrayList.clear();
+        for (int i = 0; i < dbc.getDatabaseContent().size(); i++) {
+            addMeepObjectToArrayList((meep) dbc.getDatabaseContent().get(i));
+        }
+        listModel.clear();
         for (meep meep : meepArrayList) {
             listModel.addElement(meep.toString());
         }
-        list = new JList(listModel);
-        list.setFixedCellWidth(40);
-        list.setFixedCellHeight(40);
-        list.setFont(listFont);
-        list.setSelectionBackground(Color.GRAY);
+        if (list == null) {
+            list = new JList(listModel);
+            list.setFixedCellWidth(40);
+            list.setFixedCellHeight(40);
+            list.setFont(listFont);
+            list.setSelectionBackground(Color.GRAY);
+        } else {
+            list.setModel(listModel);
+        }
     }
 
 
-    public void clearListModel() {
-        listModel.clear();
-    }
+    public void clearListModel() {listModel.clear();}
 
-    public JList getList() {
-        return list;
-    }
+    public JList getList() {return list;}
 
-    public int randomNumber(int min, int max) {
-        return (int) Math.floor(Math.random()*((max+1)-min)+min);
-    }
+    public int randomNumber(int min, int max) {return (int) Math.floor(Math.random()*((max+1)-min)+min);}
 
     public long getDateInEpoch(String string) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -64,7 +67,9 @@ public class model {
         return epoch;
     }
 
-    public boolean getEditing() {
-        return editing;
-    }
+    public meep getMeepFromArrayListByID(int id) {return meepArrayList.get(id);}
+
+    public boolean getEditing() {return editing;}
+
+    public void setEditing(boolean editing) {this.editing = editing;}
 }

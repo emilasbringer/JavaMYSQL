@@ -26,4 +26,6 @@ public class meep {
         output += body + " ";
         return output;
     }
+
+    public int getId() {return id;}
 }

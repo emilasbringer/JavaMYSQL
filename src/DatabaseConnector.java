@@ -72,4 +72,31 @@ public class DatabaseConnector {
         }
         return result;
     }
+
+    public void insertData(String meepBody) {
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("INSERT INTO emlasr_meeps (body) VALUES ('" + meepBody + "')");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateData(String meepBody, int id) {
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("INSERT INTO emlasr_meeps (body) VALUES ('" + meepBody + "')");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteData(int id) {
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate("DELETE FROM emlasr_meeps WHERE (id) = " + id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

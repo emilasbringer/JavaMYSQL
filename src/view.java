@@ -13,6 +13,8 @@ public class view {
         return panel;
     }
 
+    public JTextField getMeepTextTextField() {return meepTextTextField;}
+
     public JButton getAddUpdateButton() {return addUpdateButton;}
 
     public JButton getDeleteButton() {return deleteButton;}
